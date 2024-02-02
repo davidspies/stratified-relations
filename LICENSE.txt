@@ -1,0 +1,1 @@
+I'm not really sure what use-case anyone else would have for this code in the state it's in right now. Just HMU if you want to use or modify it for some reason.

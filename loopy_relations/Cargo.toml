@@ -1,0 +1,16 @@
+[package]
+name = "loopy_relations"
+version = "0.1.0"
+edition = "2021"
+license-file = "../LICENSE.txt"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+derive-where.workspace = true
+
+always_consume.workspace = true
+hashmap_tools.workspace = true
+l2_heaps.workspace = true
+l2_map.workspace = true
+relation_pipeline.workspace = true

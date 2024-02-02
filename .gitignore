@@ -1,0 +1,5 @@
+/.cargo
+/inputs
+/proofs
+/target
+/scripts/__pycache__

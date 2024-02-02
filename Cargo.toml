@@ -1,0 +1,26 @@
+[workspace]
+members = ["edrat_translator", "satsolver",]
+resolver = "2"
+
+[workspace.dependencies]
+arrayvec = "*"
+clap = { version = "*", features = ["derive"] }
+consume_on_drop = "*"
+derive-where = "*"
+either = "*"
+index_list = "*"
+itertools = "*"
+once_cell = "*"
+trait_enum = "*"
+
+always_consume.path = "always_consume"
+broadcast_channel.path = "broadcast_channel"
+hashmap_tools.path = "hashmap_tools"
+l2_heaps.path = "l2_heaps"
+l2_map.path = "l2_map"
+loopy_relations.path = "loopy_relations"
+relation_pipeline.path = "relation_pipeline"
+sat.path = "sat"
+satsolver_relgraph.path = "satsolver_relgraph"
+satsolver.path = "satsolver"
+swap_channel.path = "swap_channel"
