@@ -5,8 +5,8 @@ use std::{
 };
 
 use crate::{
-    op::{CommitId, RelationalOp},
     Relation,
+    op::{CommitId, RelationalOp},
 };
 
 use super::{Consolidate, Dynamic};

@@ -5,8 +5,8 @@ use std::rc::Rc;
 
 use loopy_relations::{CreationContext, ExecutionContext};
 use once_cell::unsync::Lazy;
-use sat::{sanitize_rule, Atom, Literal, RuleIndex, Sign};
-use satsolver_relgraph::{signal, RelGraph};
+use sat::{Atom, Literal, RuleIndex, Sign, sanitize_rule};
+use satsolver_relgraph::{RelGraph, signal};
 
 pub struct Solver {
     context: ExecutionContext,
@@ -143,7 +143,7 @@ impl Solver {
             .add_rule(RuleIndex(self.next_rule_index), &new_rule);
         writeln!(self.proof_output, "{}", sat::format_rule(&new_rule)).unwrap();
         let inserted = self.learnt_rules.insert(new_rule.clone());
-        assert!(inserted, "learnt rule already learnt: {:?}", new_rule);
+        assert!(inserted, "learnt rule already learnt: {new_rule:?}");
         self.next_rule_index += 1;
     }
 }

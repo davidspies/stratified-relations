@@ -60,7 +60,7 @@ impl RelGraph {
             signal::SINGLETON_DISCOVERED_1 => &mut self.discovered_singleton_output1,
             signal::SINGLETON_DISCOVERED_2 => &mut self.discovered_singleton_output2,
             signal::BINARY_DISCOVERED => &mut self.discovered_binary_output,
-            _ => panic!("unexpected interrupt code {}", interrupt_code),
+            _ => panic!("unexpected interrupt code {interrupt_code}"),
         };
         let mut result = Vec::from_iter(output.iter().copied());
         assert!(

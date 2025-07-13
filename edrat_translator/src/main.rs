@@ -1,10 +1,10 @@
-use std::collections::hash_map::Entry;
 use std::collections::HashSet;
+use std::collections::hash_map::Entry;
 use std::io::{BufRead, BufReader, Write};
 use std::{collections::HashMap, fs::File, path::PathBuf};
 
 use clap::Parser;
-use sat::{format_rule, parse, sanitize_rule, Atom, Literal, RuleIndex};
+use sat::{Atom, Literal, RuleIndex, format_rule, parse, sanitize_rule};
 
 /// Translates an EDRAT proof int a DRAT proof.
 #[derive(Parser)]

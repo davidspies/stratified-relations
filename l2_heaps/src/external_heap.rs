@@ -83,9 +83,7 @@ impl<'a, K1: Clone + Eq + Hash, K2: Clone + Ord + Hash, V> ExternalHeap<'a, K1, 
     }
 
     pub(crate) fn remove(&mut self, k2: &K2) -> Option<V> {
-        let Some(mut ind) = self.map.remove(&(self.k1.clone(), k2.clone())) else {
-            return None;
-        };
+        let mut ind = self.map.remove(&(self.k1.clone(), k2.clone()))?;
         let ExternalEntry { i, j } = self.external.as_mut().unwrap();
         let last_ind = *j;
         if *i == last_ind {

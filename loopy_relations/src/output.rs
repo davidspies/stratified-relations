@@ -1,6 +1,6 @@
 use std::{collections::HashMap, hash::Hash};
 
-use relation_pipeline::{ops::Dynamic, RelationalOp};
+use relation_pipeline::{RelationalOp, ops::Dynamic};
 
 pub struct Output<T, Op: RelationalOp<T = T> = Dynamic<'static, T>> {
     inner: relation_pipeline::Output<T, Op>,

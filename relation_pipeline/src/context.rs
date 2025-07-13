@@ -1,6 +1,6 @@
 use std::{cell::Cell, rc::Rc};
 
-use crate::{ops::InputOp, Input, InputRelation, Output, Relation, RelationalOp};
+use crate::{Input, InputRelation, Output, Relation, RelationalOp, ops::InputOp};
 
 #[derive(Default)]
 pub struct CreationContext {

@@ -2,7 +2,7 @@ use std::hash::Hash;
 
 use relation_pipeline::RelationalOp;
 
-use crate::{frameless_input::FramelessInput, FirstOccurrencesInput, Output};
+use crate::{FirstOccurrencesInput, Output, frameless_input::FramelessInput};
 
 pub type InterruptId = usize;
 

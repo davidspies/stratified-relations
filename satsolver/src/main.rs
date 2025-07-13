@@ -4,7 +4,7 @@ use std::{
     io::{self, BufReader, Write},
 };
 
-use sat::{parse, Literal};
+use sat::{Literal, parse};
 use satsolver::Solver;
 
 use clap::Parser;

@@ -1,5 +1,5 @@
 use l2_map::L2Map;
-use rand::{rngs::StdRng, Rng, SeedableRng};
+use rand::{Rng, SeedableRng, rngs::StdRng};
 use std::collections::{HashMap, HashSet};
 
 #[test]

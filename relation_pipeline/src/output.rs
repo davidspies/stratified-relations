@@ -1,4 +1,4 @@
-use crate::{ops::Dynamic, Relation, RelationalOp};
+use crate::{Relation, RelationalOp, ops::Dynamic};
 
 pub struct Output<T, Op: RelationalOp<T = T> = Dynamic<'static, T>>(pub(crate) Relation<T, Op>);
 

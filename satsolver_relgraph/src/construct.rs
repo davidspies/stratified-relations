@@ -4,7 +4,7 @@ use either::Either::{Left, Right};
 use loopy_relations::CreationContext;
 use sat::{Atom, Level, Literal, LiteralCause, RuleIndex, Sign};
 
-use crate::{signal, RelGraph};
+use crate::{RelGraph, signal};
 
 impl RelGraph {
     pub fn construct(context: &mut CreationContext) -> Self {
@@ -263,7 +263,7 @@ impl RelGraph {
             .consolidate()
             .map(|((lit, cause), conflict_level)| match cause {
                 LiteralCause::Propogated(ri, level) => {
-                    assert!(level <= conflict_level, "{:?} {:?}", level, conflict_level);
+                    assert!(level <= conflict_level, "{level:?} {conflict_level:?}");
                     if level == conflict_level {
                         Left((ri, lit))
                     } else {

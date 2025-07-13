@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, HashMap};
 
-use rand::{rngs::StdRng, Rng, SeedableRng};
+use rand::{Rng, SeedableRng, rngs::StdRng};
 
 use l2_heaps::L2Heaps;
 
