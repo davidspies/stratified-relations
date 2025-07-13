@@ -12,9 +12,9 @@ fn test_equivalence() {
     let mut hash_map = HashMap::new();
 
     for _ in 0..1000 {
-        let key: i32 = rng.gen_range(0..10);
-        let key2: i32 = rng.gen_range(0..100);
-        let value: i32 = rng.gen_range(0..1000);
+        let key: i32 = rng.random_range(0..10);
+        let key2: i32 = rng.random_range(0..100);
+        let value: i32 = rng.random_range(0..1000);
 
         let heaps_inserted = l2_heaps.insert(key, key2, value);
         let map_inserted = hash_map
@@ -32,8 +32,8 @@ fn test_equivalence() {
     }
 
     for _ in 0..500 {
-        let key: i32 = rng.gen_range(0..10);
-        let value: i32 = rng.gen_range(0..100);
+        let key: i32 = rng.random_range(0..10);
+        let value: i32 = rng.random_range(0..100);
 
         let heaps_removed = l2_heaps.remove(&key, &value);
         let map_removed = if let Some(set) = hash_map.get_mut(&key) {

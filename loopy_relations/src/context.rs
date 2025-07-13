@@ -3,10 +3,10 @@ use std::hash::Hash;
 use relation_pipeline::{InputRelation, Relation, RelationalOp};
 
 use crate::{
+    FirstOccurrencesInput, Input, InterruptId, Output,
     feeder::{FeedResult, Feeder, Interrupter},
     frameless_input::FramelessInput,
     input::IsTrackedInput,
-    FirstOccurrencesInput, Input, InterruptId, Output,
 };
 
 #[derive(Default)]
@@ -45,7 +45,7 @@ impl CreationContext {
 
     pub fn new_input<T: Eq + Hash + Clone + 'static>(
         &mut self,
-    ) -> (Input<T>, Relation<T, impl RelationalOp<T = T>>) {
+    ) -> (Input<T>, Relation<T, impl RelationalOp<T = T> + use<T>>) {
         let (inner, rel) = self.new_first_occurrences_input::<T, ()>();
         (Input(inner), rel.fsts())
     }
@@ -154,10 +154,10 @@ pub trait FeedbackableFrom<O> {
 }
 
 impl<
-        K: Eq + Hash + Clone + 'static,
-        V: Ord + Hash + Clone + 'static,
-        Op: RelationalOp<T = (K, V)> + 'static,
-    > FeedbackableFrom<Relation<(K, V), Op>> for FirstOccurrencesInput<K, V>
+    K: Eq + Hash + Clone + 'static,
+    V: Ord + Hash + Clone + 'static,
+    Op: RelationalOp<T = (K, V)> + 'static,
+> FeedbackableFrom<Relation<(K, V), Op>> for FirstOccurrencesInput<K, V>
 {
     fn feedback_from(self, context: &mut CreationContext, output: Relation<(K, V), Op>) {
         context.set_first_occurrences_feedback(output, self)

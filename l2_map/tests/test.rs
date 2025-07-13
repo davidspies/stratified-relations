@@ -10,9 +10,9 @@ fn test_l2map_equivalence() {
     let mut hash_map: HashMap<i32, HashMap<i32, i32>> = HashMap::new();
 
     for _ in 0..1000 {
-        let k1: i32 = rng.gen_range(0..10);
-        let k2: i32 = rng.gen_range(0..10);
-        let v: i32 = rng.gen_range(0..100);
+        let k1: i32 = rng.random_range(0..10);
+        let k2: i32 = rng.random_range(0..10);
+        let v: i32 = rng.random_range(0..100);
 
         let l2_map_replaced = l2_map.insert(k1, k2, v);
         let hash_map_replaced = hash_map.entry(k1).or_default().insert(k2, v);
@@ -25,8 +25,8 @@ fn test_l2map_equivalence() {
     }
 
     for _ in 0..500 {
-        let k1: i32 = rng.gen_range(0..10);
-        let k2: i32 = rng.gen_range(0..10);
+        let k1: i32 = rng.random_range(0..10);
+        let k2: i32 = rng.random_range(0..10);
 
         let l2_map_removed = l2_map.remove(&k1, &k2);
         let hash_map_removed = match hash_map.get_mut(&k1) {
