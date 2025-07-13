@@ -51,7 +51,7 @@ impl RelGraph {
         self.level_input.insert(level);
     }
 
-    pub fn all_assignments(&mut self) -> HashMap<Atom, Sign> {
+    pub fn all_assignments(mut self) -> HashMap<Atom, Sign> {
         HashMap::from_iter(self.assigned_output.iter().map(Literal::atom_and_sign))
     }
 

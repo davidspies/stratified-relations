@@ -108,22 +108,7 @@ impl Solver {
                 Some(_) => unreachable!(),
                 None => {
                     let Some(next_selection) = self.relgraph.next_literal() else {
-                        let mut result = self.relgraph.all_assignments();
-                        let compressed_equivalence_graph = path_compress(&self.equivalence_graph);
-                        for (&x, &y) in compressed_equivalence_graph.iter() {
-                            let &mut ysign = result.entry(y.atom()).or_insert(Sign::Neg);
-                            if y.sign() == ysign {
-                                result.insert(x.atom(), x.sign());
-                            }
-                        }
-                        for &atom in &self.required_atoms {
-                            result.entry(atom).or_insert(Sign::Neg);
-                        }
-                        let mut result = Vec::from_iter(
-                            result.into_iter().map(|(atom, sign)| atom.with_sign(sign)),
-                        );
-                        result.sort();
-                        return Some(result);
+                        return Some(self.construct_solution());
                     };
                     let (atom, sign) = next_selection.atom_and_sign();
                     let replaced = selected_literals.insert(atom, sign);
@@ -135,6 +120,24 @@ impl Solver {
                 }
             }
         }
+    }
+
+    fn construct_solution(self) -> Vec<Literal> {
+        let mut result = self.relgraph.all_assignments();
+        let compressed_equivalence_graph = path_compress(&self.equivalence_graph);
+        for (&x, &y) in compressed_equivalence_graph.iter() {
+            let &mut ysign = result.entry(y.atom()).or_insert(Sign::Neg);
+            if y.sign() == ysign {
+                result.insert(x.atom(), x.sign());
+            }
+        }
+        for &atom in &self.required_atoms {
+            result.entry(atom).or_insert(Sign::Neg);
+        }
+        let mut result =
+            Vec::from_iter(result.into_iter().map(|(atom, sign)| atom.with_sign(sign)));
+        result.sort();
+        result
     }
 
     #[track_caller]
