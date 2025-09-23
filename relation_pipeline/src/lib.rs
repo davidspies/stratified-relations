@@ -178,6 +178,7 @@ impl<K, V, Op: RelationalOp<T = (K, V)>> Relation<(K, V), Op> {
             self.current_commit_id,
         )
     }
+    #[allow(clippy::type_complexity)]
     pub fn join<V2>(
         self,
         other: Relation<(K, V2), impl RelationalOp<T = (K, V2)>>,
