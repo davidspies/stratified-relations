@@ -73,38 +73,6 @@ impl Solver {
                         level -= 1;
                     }
                 }
-                Some(signal::SELECTION_INVALIDATED) => {
-                    self.context.pop_frame_();
-                    let lit = literal_at_level.pop().unwrap();
-                    let removed = selected_literals.remove(&lit.atom());
-                    assert_eq!(removed, Some(lit.sign()));
-                    level -= 1;
-                }
-                Some(signal::ROOT_CONFLICT) => {
-                    writeln!(self.proof_output, "0").unwrap();
-                    return None;
-                }
-                Some(
-                    code @ (signal::SINGLETON_DISCOVERED_1
-                    | signal::SINGLETON_DISCOVERED_2
-                    | signal::BINARY_DISCOVERED),
-                ) => {
-                    let discovered_rule = self.relgraph.get_discovered_rule(code);
-                    self.add_rule(discovered_rule);
-                }
-                Some(signal::EQUIVALENCE_DISCOVERED) => {
-                    let (atom, lit) = self.relgraph.get_discovered_equivalence();
-                    if lit.atom() == atom {
-                        assert!(lit.0 < 0);
-                        writeln!(self.proof_output, "{} 0", atom.0).unwrap();
-                        writeln!(self.proof_output, "0").unwrap();
-                        return None;
-                    }
-                    writeln!(self.proof_output, "= {} {} 0", atom.0, lit.0).unwrap();
-                    self.relgraph.add_equivalence(atom, lit);
-                    self.equivalence_graph.insert(atom.pos(), lit);
-                    self.equivalence_graph.insert(atom.neg(), !lit);
-                }
                 Some(_) => unreachable!(),
                 None => {
                     let Some(next_selection) = self.relgraph.next_literal() else {
