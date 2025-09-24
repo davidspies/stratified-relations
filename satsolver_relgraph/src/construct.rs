@@ -47,6 +47,8 @@ impl RelGraph {
         context.set_interrupt(conflict_literals.get(), signal::ASSIGNMENT_CONFLICT);
         let assign_output = context.output(unit_literal_causes.get());
         context.set_feedback(unit_literal_causes.get().fsts(), assign_input.clone());
+        let use_counts = reduced_rules.get().snds().counts();
+        let next_literal = context.output(use_counts.swaps().global_max().snds().dynamic());
         Self {
             rules_input,
             level_input,
@@ -54,7 +56,9 @@ impl RelGraph {
             assign_output,
             violated_output,
             conflict_output,
+            next_literal,
             decision_literals: HashMap::new(),
+            rules: HashMap::new(),
         }
     }
 }

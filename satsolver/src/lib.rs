@@ -24,7 +24,7 @@ impl Solver {
         mut proof_output: Box<dyn Write>,
     ) -> Option<Self> {
         let mut context = CreationContext::new();
-        let relgraph = RelGraph::construct(&mut context);
+        let mut relgraph = RelGraph::construct(&mut context);
         let mut next_rule_index = 0;
         let mut required_atoms = HashSet::new();
         for rule in rules {
