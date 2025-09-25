@@ -15,4 +15,5 @@ broadcast_channel.workspace = true
 hashmap_tools.workspace = true
 l2_heaps.workspace = true
 l2_map.workspace = true
+multisets.workspace = true
 swap_channel.workspace = true

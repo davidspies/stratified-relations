@@ -1,5 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
+use multisets::MultiSet;
+
 use crate::op::{CommitId, RelationalOp};
 
 pub(crate) struct Counts<T: Clone + Eq + Hash, Op: RelationalOp<T = T>> {
@@ -25,17 +27,12 @@ impl<T: Clone + Eq + Hash, Op: RelationalOp<T = T>> RelationalOp for Counts<T, O
             if n == 0 {
                 return;
             }
-            let count = self.counts.entry(t.clone()).or_insert(0);
-            let old_count = *count;
-            *count += n;
-            let new_count = *count;
-            if new_count == 0 {
-                self.counts.remove(&t);
-                f((t, old_count), -1);
-            } else {
-                if old_count != 0 {
-                    f((t.clone(), old_count), -1);
-                }
+            let new_count = self.counts.add(t.clone(), n);
+            let old_count = new_count - n;
+            if old_count != 0 {
+                f((t.clone(), old_count), -1);
+            }
+            if new_count != 0 {
                 f((t, new_count), 1);
             }
         })

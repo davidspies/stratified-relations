@@ -1,13 +1,9 @@
-use std::{
-    collections::{HashMap, hash_map},
-    hash::Hash,
-};
+use std::{collections::HashMap, hash::Hash};
 
 use l2_map::L2Map;
+use multisets::MultiSet;
 
 use crate::op::{CommitId, RelationalOp};
-
-use super::l2_util::add;
 
 pub(crate) struct Antijoin<
     K: Clone + Eq + Hash,
@@ -50,36 +46,25 @@ where
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut((K, V), i64)) {
         self.input2.for_each(commit_id, |k, n2| {
-            if n2 == 0 {
-                return;
-            }
-            match self.kvs2.entry(k) {
-                hash_map::Entry::Occupied(mut e) => {
-                    let count = e.get_mut();
-                    *count += n2;
-                    if *count == 0 {
-                        let (k, _) = e.remove_entry();
-                        for (v1, n1) in self.kvs1.get_iter(&k) {
-                            f((k.clone(), v1.clone()), *n1);
-                        }
-                    }
+            assert!(n2 != 0);
+            let new_val = self.kvs2.add(k.clone(), n2);
+            let old_val = new_val - n2;
+            if old_val == 0 {
+                for (v1, n1) in self.kvs1.get_iter(&k) {
+                    f((k.clone(), v1.clone()), -*n1);
                 }
-                hash_map::Entry::Vacant(e) => {
-                    for (v1, n1) in self.kvs1.get_iter(e.key()) {
-                        f((e.key().clone(), v1.clone()), -*n1);
-                    }
-                    e.insert(n2);
+            } else if new_val == 0 {
+                for (v1, n1) in self.kvs1.get_iter(&k) {
+                    f((k.clone(), v1.clone()), *n1);
                 }
             }
         });
         self.input1.for_each(commit_id, |(k, v1), n1| {
-            if n1 == 0 {
-                return;
-            }
+            assert!(n1 != 0);
             if !self.kvs2.contains_key(&k) {
                 f((k.clone(), v1.clone()), n1);
             }
-            add(&mut self.kvs1, k, v1, n1);
+            self.kvs1.add((k, v1), n1);
         });
     }
     fn unconsolidate(self) -> Self::Unconsolidated {

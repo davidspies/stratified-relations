@@ -1,10 +1,9 @@
 use std::hash::Hash;
 
 use l2_map::L2Map;
+use multisets::MultiSet;
 
 use crate::op::{CommitId, RelationalOp};
-
-use super::l2_util::add;
 
 pub(crate) struct Join<
     K: Clone + Eq + Hash,
@@ -57,14 +56,14 @@ where
             for (v2, n2) in v2s {
                 f((k.clone(), (v1.clone(), v2.clone())), n1 * *n2);
             }
-            add(&mut self.kvs1, k, v1, n1);
+            self.kvs1.add((k, v1), n1);
         });
         self.input2.for_each(commit_id, |(k, v2), n2| {
             let v1s = self.kvs1.get_iter(&k);
             for (v1, n1) in v1s {
                 f((k.clone(), (v1.clone(), v2.clone())), *n1 * n2);
             }
-            add(&mut self.kvs2, k, v2, n2);
+            self.kvs2.add((k, v2), n2);
         });
     }
     fn unconsolidate(self) -> Self::Unconsolidated {

@@ -1,6 +1,7 @@
 use std::{collections::HashMap, hash::Hash, mem};
 
 use arrayvec::ArrayVec;
+use multisets::MultiSet;
 
 use crate::op::{CommitId, RelationalOp};
 
@@ -75,17 +76,7 @@ impl<K: Clone + Eq + Hash, V: Clone + Ord + Hash, Op: RelationalOp<T = (K, V)>, 
                     f((k.clone(), output(vec)), 1);
                 }
                 let (v, count) = to_insert;
-                match self.heaps.get_mut(&k, &v) {
-                    Some(current_count) => {
-                        *current_count += count;
-                        if *current_count == 0 {
-                            self.heaps.remove(&k, &v);
-                        }
-                    }
-                    None => {
-                        self.heaps.insert(k.clone(), v.clone(), count);
-                    }
-                }
+                self.heaps.add((k, v), count);
             }
         })
     }

@@ -247,6 +247,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "multisets"
+version = "0.1.0"
+dependencies = [
+ "hashmap_tools",
+ "l2_heaps",
+ "l2_map",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.21.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -331,6 +340,7 @@ dependencies = [
  "hashmap_tools",
  "l2_heaps",
  "l2_map",
+ "multisets",
  "swap_channel",
 ]
 

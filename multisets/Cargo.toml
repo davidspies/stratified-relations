@@ -1,0 +1,9 @@
+[package]
+name = "multisets"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+hashmap_tools.workspace = true
+l2_heaps.workspace = true
+l2_map.workspace = true

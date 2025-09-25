@@ -21,7 +21,6 @@ mod dynamic;
 mod flat_map;
 mod input;
 mod join;
-mod l2_util;
 mod save;
 mod split;
 mod top_ns;

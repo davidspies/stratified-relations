@@ -1,7 +1,6 @@
-use std::{
-    collections::{HashMap, hash_map},
-    hash::Hash,
-};
+use std::{collections::HashMap, hash::Hash};
+
+use multisets::MultiSet;
 
 pub(crate) type CommitId = u64;
 
@@ -23,17 +22,8 @@ pub trait RelationalOp {
     where
         Self::T: Eq + Hash,
     {
-        self.for_each(commit_id, |x, n| match counts.entry(x) {
-            hash_map::Entry::Vacant(e) => {
-                e.insert(n);
-            }
-            hash_map::Entry::Occupied(mut e) => {
-                let count = e.get_mut();
-                *count += n;
-                if *count == 0 {
-                    e.remove();
-                }
-            }
+        self.for_each(commit_id, |x, n| {
+            counts.add(x, n);
         });
     }
     fn unconsolidate(self) -> Self::Unconsolidated;

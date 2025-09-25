@@ -1,5 +1,5 @@
 [workspace]
-members = ["edrat_translator", "satsolver",]
+members = ["edrat_translator", "multisets", "satsolver",]
 resolver = "2"
 
 [workspace.dependencies]
@@ -19,6 +19,7 @@ hashmap_tools.path = "hashmap_tools"
 l2_heaps.path = "l2_heaps"
 l2_map.path = "l2_map"
 loopy_relations.path = "loopy_relations"
+multisets.path = "multisets"
 relation_pipeline.path = "relation_pipeline"
 sat.path = "sat"
 satsolver_relgraph.path = "satsolver_relgraph"
