@@ -12,13 +12,9 @@ impl<T, I: RelationalOp<T = T>, J: RelationalOp<T = T>> Concat<T, I, J> {
 
 impl<T, I: RelationalOp<T = T>, J: RelationalOp<T = T>> RelationalOp for Concat<T, I, J> {
     type T = T;
-    type Unconsolidated = Self;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut(T, i64)) {
         self.input1.for_each(commit_id, &mut f);
         self.input2.for_each(commit_id, &mut f);
-    }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self
     }
 }

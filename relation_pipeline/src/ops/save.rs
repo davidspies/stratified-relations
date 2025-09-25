@@ -24,7 +24,6 @@ pub struct SaveOp<T: Clone, R: RelationalOp<T = T> = Dynamic<'static, T>> {
 
 impl<T: Clone, R: RelationalOp<T = T>> RelationalOp for SaveOp<T, R> {
     type T = T;
-    type Unconsolidated = Self;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut(T, i64)) {
         {
@@ -42,9 +41,7 @@ impl<T: Clone, R: RelationalOp<T = T>> RelationalOp for SaveOp<T, R> {
             f(x, n);
         }
     }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self
-    }
+    // todo!() Consolidate should be a no-op
 }
 
 pub struct Save<T: Clone, R: RelationalOp<T = T> = Dynamic<'static, T>> {
@@ -66,17 +63,20 @@ impl<T: Clone, Op: RelationalOp<T = T>> Save<T, Op> {
         }
     }
     pub fn get_(&self) -> Relation<T, SaveOp<T, Op>> {
-        let input = self.inner.clone();
-        let receiver = self.inner.borrow().sender.subscribe();
-        Relation::new(
-            SaveOp { input, receiver },
-            Rc::clone(&self.current_commit_id),
-        )
+        Relation::new(self.get_op(), Rc::clone(&self.current_commit_id))
     }
     pub fn get(&self) -> Relation<T, Consolidate<T, SaveOp<T, Op>>>
     where
         T: Eq + Hash,
     {
-        self.get_().consolidate()
+        Relation::new(
+            Consolidate::new(self.get_op()),
+            Rc::clone(&self.current_commit_id),
+        )
+    }
+    fn get_op(&self) -> SaveOp<T, Op> {
+        let input = self.inner.clone();
+        let receiver = self.inner.borrow().sender.subscribe();
+        SaveOp { input, receiver }
     }
 }

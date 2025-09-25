@@ -17,7 +17,6 @@ impl<T> InputOp<T> {
 
 impl<T> RelationalOp for InputOp<T> {
     type T = T;
-    type Unconsolidated = Self;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut(T, i64)) {
         while let Some(&(_, id, _)) = self.pending.front() {
@@ -38,7 +37,5 @@ impl<T> RelationalOp for InputOp<T> {
         }
         self.pending.extend(iter);
     }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self
-    }
+    // todo!() Consolidate should be a no-op
 }

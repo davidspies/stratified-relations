@@ -40,7 +40,6 @@ pub(crate) fn split<L, R, Op: RelationalOp<T = (L, R)>>(
 
 impl<T, L, R, Op: RelationalOp<T = (L, R)>> RelationalOp for Split<T, L, R, Op> {
     type T = T;
-    type Unconsolidated = Self;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut(T, i64)) {
         {
@@ -62,7 +61,5 @@ impl<T, L, R, Op: RelationalOp<T = (L, R)>> RelationalOp for Split<T, L, R, Op> 
             f(x, n);
         }
     }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self
-    }
+    // todo!() Consolidate should be a no-op
 }

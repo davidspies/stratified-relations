@@ -2,11 +2,12 @@ use std::{collections::HashMap, hash::Hash};
 
 use multisets::MultiSet;
 
+use crate::ops::Consolidate;
+
 pub(crate) type CommitId = u64;
 
 pub trait RelationalOp {
     type T;
-    type Unconsolidated: RelationalOp<T = Self::T>;
 
     fn for_each(&mut self, commit_id: CommitId, f: impl FnMut(Self::T, i64));
     fn send_all(
@@ -26,5 +27,11 @@ pub trait RelationalOp {
             counts.add(x, n);
         });
     }
-    fn unconsolidate(self) -> Self::Unconsolidated;
+    fn consolidate(self) -> impl RelationalOp<T = Self::T>
+    where
+        Self: Sized,
+        Self::T: Eq + Hash,
+    {
+        Consolidate::new(self)
+    }
 }

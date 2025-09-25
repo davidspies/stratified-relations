@@ -20,13 +20,10 @@ impl<T: Clone + Eq + Hash, Op: RelationalOp<T = T>> Counts<T, Op> {
 
 impl<T: Clone + Eq + Hash, Op: RelationalOp<T = T>> RelationalOp for Counts<T, Op> {
     type T = (T, i64);
-    type Unconsolidated = Self;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut((T, i64), i64)) {
         self.relation.for_each(commit_id, |t, n| {
-            if n == 0 {
-                return;
-            }
+            assert!(n != 0);
             let new_count = self.counts.add(t.clone(), n);
             let old_count = new_count - n;
             if old_count != 0 {
@@ -37,7 +34,7 @@ impl<T: Clone + Eq + Hash, Op: RelationalOp<T = T>> RelationalOp for Counts<T, O
             }
         })
     }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self
+    fn consolidate(self) -> impl RelationalOp<T = (T, i64)> {
+        Counts::new(self.relation.consolidate())
     }
 }

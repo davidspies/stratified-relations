@@ -32,7 +32,6 @@ impl<K: Clone + Eq + Hash, V: Clone + Ord + Hash, Op: RelationalOp<T = (K, V)>, 
     RelationalOp for TopNs<K, V, Op, N>
 {
     type T = (K, ArrayVec<V, N>);
-    type Unconsolidated = Self;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut((K, ArrayVec<V, N>), i64)) {
         self.relation.for_each(commit_id, |(k, v), count| {
@@ -79,9 +78,6 @@ impl<K: Clone + Eq + Hash, V: Clone + Ord + Hash, Op: RelationalOp<T = (K, V)>, 
                 self.heaps.add((k, v), count);
             }
         })
-    }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self
     }
 }
 

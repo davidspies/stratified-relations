@@ -24,7 +24,6 @@ where
     F: FnMut(S) -> R,
 {
     type T = T;
-    type Unconsolidated = Self;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut(T, i64)) {
         self.input.for_each(commit_id, |x, n| {
@@ -32,8 +31,5 @@ where
                 f(y, n);
             }
         });
-    }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self
     }
 }

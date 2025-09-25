@@ -1,4 +1,4 @@
-use std::{cell::Cell, rc::Rc};
+use std::{cell::Cell, hash::Hash, rc::Rc};
 
 use crate::{
     op::{CommitId, RelationalOp},
@@ -34,9 +34,12 @@ impl<T, Op: RelationalOp<T = T>> Relation<T, Op> {
             .op
             .dump_to_map(self.current_commit_id.get(), counts);
     }
-    pub fn unconsolidate(self) -> Relation<T, Op::Unconsolidated> {
+    pub fn consolidate(self) -> Relation<T, impl RelationalOp<T = T>>
+    where
+        T: Eq + Hash,
+    {
         Relation {
-            relation: self.relation.unconsolidate(),
+            relation: RelationInner::new(self.relation.op.consolidate()),
             current_commit_id: self.current_commit_id,
         }
     }
@@ -50,12 +53,14 @@ impl<T, Op: RelationalOp<T = T>> RelationInner<T, Op> {
 
 impl<T, Op: RelationalOp<T = T>> RelationalOp for RelationInner<T, Op> {
     type T = T;
-    type Unconsolidated = RelationInner<T, Op::Unconsolidated>;
 
     fn for_each(&mut self, commit_id: CommitId, f: impl FnMut(Self::T, i64)) {
         self.op.for_each(commit_id, f);
     }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        Self::Unconsolidated::new(self.op.unconsolidate())
+    fn consolidate(self) -> impl RelationalOp<T = T>
+    where
+        T: Eq + Hash,
+    {
+        RelationInner::new(self.op.consolidate())
     }
 }

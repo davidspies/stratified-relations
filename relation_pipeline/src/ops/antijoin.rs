@@ -42,7 +42,6 @@ where
     J: RelationalOp<T = K>,
 {
     type T = (K, V);
-    type Unconsolidated = Self;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut((K, V), i64)) {
         self.input2.for_each(commit_id, |k, n2| {
@@ -66,8 +65,5 @@ where
             }
             self.kvs1.add((k, v1), n1);
         });
-    }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self
     }
 }

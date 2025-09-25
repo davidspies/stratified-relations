@@ -4,7 +4,7 @@ use std::{cmp::Reverse, collections::hash_map::DefaultHasher, convert::identity,
 use arrayvec::ArrayVec;
 use either::Either;
 
-use self::ops::{Consolidate, Dynamic};
+use self::ops::Dynamic;
 
 pub use self::{
     context::{CreationContext, ExecutionContext},
@@ -47,15 +47,6 @@ impl<T, Op: RelationalOp<T = T>> Relation<T, Op> {
         ));
         Relation::new(
             ops::Concat::new(self.relation, other.relation),
-            self.current_commit_id,
-        )
-    }
-    pub fn consolidate(self) -> Relation<T, Consolidate<T, Op::Unconsolidated>>
-    where
-        T: Eq + Hash,
-    {
-        Relation::new(
-            ops::Consolidate::new(self.relation.op.unconsolidate()),
             self.current_commit_id,
         )
     }

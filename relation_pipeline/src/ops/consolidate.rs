@@ -18,7 +18,6 @@ impl<T: Eq + Hash, Op: RelationalOp<T = T>> Consolidate<T, Op> {
 
 impl<T: Eq + Hash, Op: RelationalOp<T = T>> RelationalOp for Consolidate<T, Op> {
     type T = T;
-    type Unconsolidated = Op;
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut(T, i64)) {
         self.relation.dump_to_map(commit_id, &mut self.counts);
@@ -26,7 +25,7 @@ impl<T: Eq + Hash, Op: RelationalOp<T = T>> RelationalOp for Consolidate<T, Op> 
             f(x, count);
         }
     }
-    fn unconsolidate(self) -> Self::Unconsolidated {
-        self.relation
+    fn consolidate(self) -> impl RelationalOp<T = T> {
+        self
     }
 }

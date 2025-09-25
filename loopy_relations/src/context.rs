@@ -92,8 +92,8 @@ impl CreationContext {
     pub fn output<T: Eq + Hash + Clone, Op: RelationalOp<T = T>>(
         &self,
         relation: Relation<T, Op>,
-    ) -> Output<T, Op::Unconsolidated> {
-        Output::new(self.inner.output(relation.unconsolidate()))
+    ) -> Output<T, Op> {
+        Output::new(self.inner.output(relation))
     }
 
     pub fn constant<T>(&self, values: impl IntoIterator<Item = T>) -> InputRelation<T> {
