@@ -12,12 +12,6 @@ impl<'a, T> Dynamic<'a, T> {
 trait RelationalOpDyn<'a> {
     type T;
     fn for_each(&mut self, commit_id: CommitId, f: &mut dyn FnMut(Self::T, i64));
-    fn send_all(
-        &mut self,
-        commit_id: CommitId,
-        sender: &mut broadcast_channel::Sender<(Self::T, i64)>,
-    ) where
-        Self::T: Clone;
     fn dump_to_map(&mut self, commit_id: u64, counts: &mut HashMap<Self::T, i64>)
     where
         Self::T: Eq + Hash;
@@ -27,15 +21,6 @@ impl<'a, T, Op: RelationalOp<T = T>> RelationalOpDyn<'a> for Op {
     type T = T;
     fn for_each(&mut self, commit_id: CommitId, f: &mut dyn FnMut(T, i64)) {
         self.for_each(commit_id, f);
-    }
-    fn send_all(
-        &mut self,
-        commit_id: CommitId,
-        sender: &mut broadcast_channel::Sender<(Self::T, i64)>,
-    ) where
-        Self::T: Clone,
-    {
-        self.send_all(commit_id, sender);
     }
     fn dump_to_map(&mut self, commit_id: u64, counts: &mut HashMap<Self::T, i64>)
     where
@@ -50,15 +35,6 @@ impl<T> RelationalOp for Dynamic<'_, T> {
 
     fn for_each(&mut self, commit_id: CommitId, mut f: impl FnMut(T, i64)) {
         self.0.for_each(commit_id, &mut f);
-    }
-    fn send_all(
-        &mut self,
-        commit_id: CommitId,
-        sender: &mut broadcast_channel::Sender<(Self::T, i64)>,
-    ) where
-        T: Clone,
-    {
-        self.0.send_all(commit_id, sender);
     }
     fn dump_to_map(&mut self, commit_id: u64, counts: &mut HashMap<Self::T, i64>)
     where

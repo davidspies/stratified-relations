@@ -138,13 +138,13 @@ impl<T, Op: RelationalOp<T = T>> Relation<T, Op> {
     }
     pub fn save(self) -> Save<T, Op>
     where
-        T: Clone,
+        T: Clone + Eq + Hash,
     {
         Save::new(self.relation.op, self.current_commit_id)
     }
     pub fn collect(self) -> Save<T>
     where
-        T: Clone,
+        T: Clone + Eq + Hash,
         Op: 'static,
     {
         self.dynamic().save()

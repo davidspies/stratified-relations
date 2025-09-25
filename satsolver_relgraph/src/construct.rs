@@ -28,7 +28,7 @@ impl RelGraph {
             .get()
             .set_minus(reduced_rule_inds.get())
             .collect();
-        let violated_output = context.output(violated_rules.get_());
+        let violated_output = context.output(violated_rules.get());
         context.set_interrupt(violated_rules.get(), signal::VIOLATED_RULE);
         let rule_sizes = reduced_rule_inds.get().counts();
         let unit_rules = rule_sizes.filter(|&(_, c)| c == 1).fsts();
@@ -43,9 +43,9 @@ impl RelGraph {
             .get()
             .intersection(unit_literals.get().map(Not::not))
             .collect();
-        let conflict_output = context.output(conflict_literals.get_());
+        let conflict_output = context.output(conflict_literals.get());
         context.set_interrupt(conflict_literals.get(), signal::ASSIGNMENT_CONFLICT);
-        let assign_output = context.output(unit_literal_causes.get_());
+        let assign_output = context.output(unit_literal_causes.get());
         context.set_feedback(unit_literal_causes.get().fsts(), assign_input.clone());
         let use_counts = reduced_rules.get().snds().counts();
         let next_literal = context.output(use_counts.swaps().global_max().snds().dynamic());

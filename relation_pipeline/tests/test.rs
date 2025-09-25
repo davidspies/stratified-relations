@@ -243,11 +243,11 @@ fn test_save_and_get() {
     let relation = relation.save();
 
     // Step 2: Create a saved snapshot of a relation derived from the initial relation
-    let saved_relation = relation.get_().distinct().consolidate().save();
+    let saved_relation = relation.get().distinct().consolidate().save();
 
     // Step 3: Create two new relations deriving from the saved relation
-    let mut distinct_relation = context.output(saved_relation.get_().distinct());
-    let mut concat_relation = context.output(saved_relation.get_().concat(relation.get_()));
+    let mut distinct_relation = context.output(saved_relation.get().distinct());
+    let mut concat_relation = context.output(saved_relation.get().concat(relation.get()));
 
     let mut context = context.begin();
 
