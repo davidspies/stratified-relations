@@ -14,7 +14,6 @@ once_cell = "*"
 trait_enum = "*"
 
 always_consume.path = "always_consume"
-broadcast_channel.path = "broadcast_channel"
 hashmap_tools.path = "hashmap_tools"
 l2_heaps.path = "l2_heaps"
 l2_map.path = "l2_map"

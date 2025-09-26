@@ -69,14 +69,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b8e56985ec62d17e9c1001dc89c88ecd7dc08e47eba5ec7c29c7b5eeecde967"
 
 [[package]]
-name = "broadcast_channel"
-version = "0.1.0"
-dependencies = [
- "derive-where",
- "swap_channel",
-]
-
-[[package]]
 name = "cfg-if"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -334,7 +326,6 @@ name = "relation_pipeline"
 version = "0.1.0"
 dependencies = [
  "arrayvec",
- "broadcast_channel",
  "derive-where",
  "either",
  "hashmap_tools",
