@@ -1,9 +1,14 @@
-use std::{cell::RefCell, collections::VecDeque, mem, rc::Rc};
+use std::{
+    cell::RefCell,
+    collections::VecDeque,
+    mem,
+    rc::{Rc, Weak},
+};
 
 use derive_where::derive_where;
 
 #[derive_where(Clone)]
-pub struct Sender<T>(Rc<RefCell<VecDeque<T>>>);
+pub struct Sender<T>(Weak<RefCell<VecDeque<T>>>);
 
 pub struct Receiver<T> {
     // Should always be empty
@@ -13,7 +18,9 @@ pub struct Receiver<T> {
 
 impl<T> Sender<T> {
     pub fn send(&self, t: T) {
-        self.0.borrow_mut().push_back(t);
+        if let Some(strong) = self.0.upgrade() {
+            strong.borrow_mut().push_back(t);
+        }
     }
 }
 
@@ -29,7 +36,7 @@ impl<T> Receiver<T> {
 
 pub fn new<T>() -> (Sender<T>, Receiver<T>) {
     let send_queue = Rc::new(RefCell::new(VecDeque::new()));
-    let sender = Sender(send_queue.clone());
+    let sender = Sender(Rc::downgrade(&send_queue));
     let receiver = Receiver {
         receive_queue: VecDeque::new(),
         send_queue,
