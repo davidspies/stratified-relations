@@ -30,7 +30,7 @@ impl CreationContext {
     >(
         &mut self,
     ) -> (FirstOccurrencesInput<K, V>, InputRelation<(K, V)>) {
-        let (inner, rel) = self.inner.new_input();
+        let (inner, rel) = self.inner.new_input_();
         let input = FirstOccurrencesInput::new(inner);
         self.inputs.push(Box::new(input.clone()));
         (input, rel)
@@ -39,7 +39,7 @@ impl CreationContext {
     pub fn new_frameless_input<T: Eq + Hash + Clone + 'static>(
         &mut self,
     ) -> (FramelessInput<T>, InputRelation<T>) {
-        let (inp, rel) = self.inner.new_input();
+        let (inp, rel) = self.inner.new_input_();
         (FramelessInput::new(inp), rel)
     }
 
@@ -47,7 +47,7 @@ impl CreationContext {
         &mut self,
     ) -> (Input<T>, Relation<T, impl RelationalOp<T = T> + use<T>>) {
         let (inner, rel) = self.new_first_occurrences_input::<T, ()>();
-        (Input(inner), rel.fsts())
+        (Input(inner), rel.fsts_())
     }
 
     pub fn set_first_occurrences_feedback<
@@ -96,8 +96,11 @@ impl CreationContext {
         Output::new(self.inner.output(relation))
     }
 
-    pub fn constant<T>(&self, values: impl IntoIterator<Item = T>) -> InputRelation<T> {
-        self.inner.constant(values.into_iter().map(|x| (x, 1)))
+    pub fn constant<'a, T: Clone + Eq + Hash + 'a>(
+        &self,
+        values: impl IntoIterator<Item = T>,
+    ) -> Relation<T, impl RelationalOp<T = T> + 'a> {
+        self.inner.constant(values)
     }
 }
 
@@ -168,7 +171,7 @@ impl<T: Eq + Hash + Clone + 'static, Op: RelationalOp<T = T> + 'static>
     FeedbackableFrom<Relation<T, Op>> for Input<T>
 {
     fn feedback_from(self, context: &mut CreationContext, output: Relation<T, Op>) {
-        context.set_first_occurrences_feedback(output.map_h(|x| (x, ())), self.0)
+        context.set_first_occurrences_feedback(output.map_h_(|x| (x, ())), self.0)
     }
 }
 

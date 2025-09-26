@@ -1,4 +1,4 @@
-use std::{cell::Cell, rc::Rc};
+use std::{cell::Cell, hash::Hash, rc::Rc};
 
 use crate::{Input, InputRelation, Output, Relation, RelationalOp, ops::InputOp};
 
@@ -11,12 +11,18 @@ impl CreationContext {
     pub fn new() -> Self {
         Self::default()
     }
-    pub fn new_input<T>(&self) -> (Input<T>, InputRelation<T>) {
+    pub fn new_input_<T>(&self) -> (Input<T>, InputRelation<T>) {
         let (sender, receiver) = swap_channel::new();
         (
             Input::new(sender, Rc::clone(&self.commit_id)),
             Relation::new(InputOp::new(receiver), self.commit_id.clone()),
         )
+    }
+    pub fn new_input<'a, T: Clone + Eq + Hash + 'a>(
+        &self,
+    ) -> (Input<T>, Relation<T, impl RelationalOp<T = T> + 'a>) {
+        let (input, input_relation) = self.new_input_();
+        (input, input_relation.consolidate().distinct_h())
     }
 
     #[track_caller]
@@ -31,10 +37,13 @@ impl CreationContext {
         }
     }
 
-    pub fn constant<T>(&self, values: impl IntoIterator<Item = (T, i64)>) -> InputRelation<T> {
+    pub fn constant<'a, T: Clone + Eq + Hash + 'a>(
+        &self,
+        values: impl IntoIterator<Item = T>,
+    ) -> Relation<T, impl RelationalOp<T = T> + 'a> {
         let (input, relation) = self.new_input();
-        for (x, count) in values {
-            input.update(x, count);
+        for x in values {
+            input.update(x, 1);
         }
         relation
     }

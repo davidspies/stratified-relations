@@ -84,15 +84,13 @@ impl<T: Clone + Eq + Hash, Op: RelationalOp<T = T>> Save<T, Op> {
         }
     }
     pub fn get(&self) -> Relation<T, SaveOp<T, Op>> {
-        Relation::new(self.get_op(), Rc::clone(&self.current_commit_id))
-    }
-    fn get_op(&self) -> SaveOp<T, Op> {
         let input = self.inner.clone();
         let receiver = Rc::new(RefCell::new(HashMap::new()));
         self.inner
             .borrow_mut()
             .listeners
             .push(Rc::downgrade(&receiver));
-        SaveOp { input, receiver }
+        let op = SaveOp { input, receiver };
+        Relation::new(op, Rc::clone(&self.current_commit_id))
     }
 }

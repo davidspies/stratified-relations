@@ -15,20 +15,20 @@ fn dijkstra<Node: Debug + Ord + Hash + Clone + 'static>(
 
     let (distances_input, distances) = context.new_input::<(Node, usize)>();
     let distances = distances.save();
-    context.set_feedback(start_rel.map(|n| (n, 0)), distances_input.clone());
+    context.set_feedback(start_rel.map_(|n| (n, 0)), distances_input.clone());
 
-    let distance_to_end = distances.get().semijoin(end_rel).snds().save();
+    let distance_to_end = distances.get().semijoin(end_rel).snds_().save();
     let mut end_distance_output = context.output(distance_to_end.get());
     context.set_interrupt(distance_to_end.get(), 0);
 
     let next_distances = distances
         .get()
-        .join_values(edges_rel.map(|(from, to, dist)| (from, (to, dist))))
-        .map(|(prev_dist, (to, edge_dist))| (to, prev_dist + edge_dist))
-        .antijoin(distances.get().fsts())
+        .join_values_(edges_rel.map_(|(from, to, dist)| (from, (to, dist))))
+        .map_(|(prev_dist, (to, edge_dist))| (to, prev_dist + edge_dist))
+        .antijoin(distances.get().fsts_())
         .collect();
 
-    let selection_distance = next_distances.get().snds().consolidate().global_min();
+    let selection_distance = next_distances.get().snds().global_min();
 
     let selected_next_distances = next_distances
         .get()

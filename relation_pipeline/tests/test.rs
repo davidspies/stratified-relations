@@ -10,7 +10,7 @@ fn simple_commit_and_retrieve_test() {
     let context = CreationContext::new();
 
     // Step 2: Create a new input and immediately create a distinct relation from it
-    let (input, relation) = context.new_input::<i32>();
+    let (input, relation) = context.new_input_::<i32>();
     let mut distinct_relation = context.output(relation.distinct());
 
     let mut context = context.begin();
@@ -38,9 +38,9 @@ fn simple_commit_and_retrieve_test() {
 fn test_concat() {
     let context = CreationContext::new();
 
-    let (input1, relation1) = context.new_input::<i32>();
-    let (input2, relation2) = context.new_input::<i32>();
-    let mut concat_relation = context.output(relation1.concat(relation2));
+    let (input1, relation1) = context.new_input_::<i32>();
+    let (input2, relation2) = context.new_input_::<i32>();
+    let mut concat_relation = context.output(relation1.union_(relation2));
 
     let mut context = context.begin();
 
@@ -61,7 +61,7 @@ fn test_concat() {
 fn test_consolidate() {
     let context = CreationContext::new();
 
-    let (input, relation) = context.new_input::<i32>();
+    let (input, relation) = context.new_input_::<i32>();
     let mut consolidated_relation = context.output(relation.consolidate());
 
     let mut context = context.begin();
@@ -82,8 +82,8 @@ fn test_consolidate() {
 #[test]
 fn test_flat_map() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<i32>();
-    let mut flat_map_relation = context.output(relation.flat_map(|x| vec![x, x * 2]));
+    let (input, relation) = context.new_input_::<i32>();
+    let mut flat_map_relation = context.output(relation.flat_map_(|x| vec![x, x * 2]));
 
     let mut context = context.begin();
 
@@ -103,7 +103,7 @@ fn test_flat_map() {
 #[test]
 fn test_global_max() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<i32>();
+    let (input, relation) = context.new_input_::<i32>();
     let mut max_relation = context.output(relation.global_max().consolidate());
 
     let mut context = context.begin();
@@ -125,7 +125,7 @@ fn test_global_max() {
 #[test]
 fn test_global_min() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<i32>();
+    let (input, relation) = context.new_input_::<i32>();
     let mut min_relation = context.output(relation.global_min());
 
     let mut context = context.begin();
@@ -147,8 +147,8 @@ fn test_global_min() {
 #[test]
 fn test_intersection() {
     let context = CreationContext::new();
-    let (input1, relation1) = context.new_input::<i32>();
-    let (input2, relation2) = context.new_input::<i32>();
+    let (input1, relation1) = context.new_input_::<i32>();
+    let (input2, relation2) = context.new_input_::<i32>();
     let mut intersection_relation = context.output(relation1.intersection(relation2));
 
     let mut context = context.begin();
@@ -171,8 +171,8 @@ fn test_intersection() {
 #[test]
 fn test_map() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<i32>();
-    let mut map_relation = context.output(relation.map(|x| x * 2));
+    let (input, relation) = context.new_input_::<i32>();
+    let mut map_relation = context.output(relation.map_(|x| x * 2));
 
     let mut context = context.begin();
 
@@ -192,8 +192,8 @@ fn test_map() {
 #[test]
 fn test_map_h() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<i32>();
-    let mut map_h_relation = context.output(relation.map_h(|x| x * 2));
+    let (input, relation) = context.new_input_::<i32>();
+    let mut map_h_relation = context.output(relation.map_h_(|x| x * 2));
 
     let mut context = context.begin();
 
@@ -213,8 +213,8 @@ fn test_map_h() {
 #[test]
 fn test_set_minus() {
     let context = CreationContext::new();
-    let (input1, relation1) = context.new_input::<i32>();
-    let (input2, relation2) = context.new_input::<i32>();
+    let (input1, relation1) = context.new_input_::<i32>();
+    let (input2, relation2) = context.new_input_::<i32>();
     let mut set_minus_relation = context.output(relation1.set_minus(relation2));
 
     let mut context = context.begin();
@@ -239,7 +239,7 @@ fn test_save_and_get() {
     let context = CreationContext::new();
 
     // Step 1: Create a new input and a relation
-    let (input, relation) = context.new_input::<i32>();
+    let (input, relation) = context.new_input_::<i32>();
     let relation = relation.save();
 
     // Step 2: Create a saved snapshot of a relation derived from the initial relation
@@ -247,7 +247,7 @@ fn test_save_and_get() {
 
     // Step 3: Create two new relations deriving from the saved relation
     let mut distinct_relation = context.output(saved_relation.get().distinct());
-    let mut concat_relation = context.output(saved_relation.get().concat(relation.get()));
+    let mut concat_relation = context.output(saved_relation.get().union_(relation.get()));
 
     let mut context = context.begin();
 
@@ -276,8 +276,8 @@ fn test_save_and_get() {
 #[test]
 fn test_antijoin() {
     let context = CreationContext::new();
-    let (input1, relation1) = context.new_input::<(i32, i32)>();
-    let (input2, relation2) = context.new_input::<i32>();
+    let (input1, relation1) = context.new_input_::<(i32, i32)>();
+    let (input2, relation2) = context.new_input_::<i32>();
     let mut antijoin_relation = context.output(relation1.antijoin(relation2));
 
     let mut context = context.begin();
@@ -299,8 +299,8 @@ fn test_antijoin() {
 #[test]
 fn test_join() {
     let context = CreationContext::new();
-    let (input1, relation1) = context.new_input::<(i32, i32)>();
-    let (input2, relation2) = context.new_input::<(i32, i32)>();
+    let (input1, relation1) = context.new_input_::<(i32, i32)>();
+    let (input2, relation2) = context.new_input_::<(i32, i32)>();
     let mut join_relation = context.output(relation1.join(relation2));
 
     let mut context = context.begin();
@@ -323,8 +323,8 @@ fn test_join() {
 #[test]
 fn test_semijoin() {
     let context = CreationContext::new();
-    let (input1, relation1) = context.new_input::<(i32, i32)>();
-    let (input2, relation2) = context.new_input::<i32>();
+    let (input1, relation1) = context.new_input_::<(i32, i32)>();
+    let (input2, relation2) = context.new_input_::<i32>();
     let mut semijoin_relation = context.output(relation1.semijoin(relation2));
 
     let mut context = context.begin();
@@ -346,8 +346,8 @@ fn test_semijoin() {
 #[test]
 fn test_fsts() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<(i32, i32)>();
-    let mut fsts_relation = context.output(relation.fsts());
+    let (input, relation) = context.new_input_::<(i32, i32)>();
+    let mut fsts_relation = context.output(relation.fsts_());
 
     let mut context = context.begin();
 
@@ -367,8 +367,8 @@ fn test_fsts() {
 #[test]
 fn test_snds() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<(i32, i32)>();
-    let mut snds_relation = context.output(relation.snds());
+    let (input, relation) = context.new_input_::<(i32, i32)>();
+    let mut snds_relation = context.output(relation.snds_());
 
     let mut context = context.begin();
 
@@ -388,7 +388,7 @@ fn test_snds() {
 #[test]
 fn test_maxes() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<(i32, i32)>();
+    let (input, relation) = context.new_input_::<(i32, i32)>();
     let mut maxes_relation = context.output(relation.maxes().consolidate());
 
     let mut context = context.begin();
@@ -410,7 +410,7 @@ fn test_maxes() {
 #[test]
 fn test_mins() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<(i32, i32)>();
+    let (input, relation) = context.new_input_::<(i32, i32)>();
     let mut mins_relation = context.output(relation.mins().consolidate());
 
     let mut context = context.begin();
@@ -432,8 +432,8 @@ fn test_mins() {
 #[test]
 fn test_split() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<(i32, i32)>();
-    let (fsts_relation, snds_relation) = relation.split();
+    let (input, relation) = context.new_input_::<(i32, i32)>();
+    let (fsts_relation, snds_relation) = relation.split_();
 
     let mut fsts_relation = context.output(fsts_relation);
     let mut snds_relation = context.output(snds_relation);
@@ -462,7 +462,7 @@ fn test_split() {
 #[test]
 fn test_swaps() {
     let context = CreationContext::new();
-    let (input, relation) = context.new_input::<(i32, i32)>();
+    let (input, relation) = context.new_input_::<(i32, i32)>();
     let mut swaps_relation = context.output(relation.swaps());
 
     let mut context = context.begin();
@@ -484,8 +484,8 @@ fn test_swaps() {
 fn test_join_differential() {
     let context = CreationContext::new();
 
-    let (input1, relation1) = context.new_input::<(i32, i32)>();
-    let (input2, relation2) = context.new_input::<(i32, i32)>();
+    let (input1, relation1) = context.new_input_::<(i32, i32)>();
+    let (input2, relation2) = context.new_input_::<(i32, i32)>();
     let mut join_relation = context.output(relation1.join(relation2).consolidate());
 
     let mut context = context.begin();
@@ -511,7 +511,7 @@ fn test_join_differential() {
 fn test_maxes_differential() {
     let context = CreationContext::new();
 
-    let (input, relation) = context.new_input::<(i32, i32)>();
+    let (input, relation) = context.new_input_::<(i32, i32)>();
     let mut maxes_relation = context.output(relation.maxes().consolidate());
 
     let mut context = context.begin();
@@ -539,8 +539,8 @@ fn test_antijoin_differential() {
     let context = CreationContext::new();
 
     // Step 1: Create an input and an associated antijoin relation
-    let (input1, relation1) = context.new_input::<(i32, i32)>();
-    let (input2, relation2) = context.new_input::<i32>();
+    let (input1, relation1) = context.new_input_::<(i32, i32)>();
+    let (input2, relation2) = context.new_input_::<i32>();
     let mut antijoin_relation = context.output(relation1.antijoin(relation2).consolidate());
 
     let mut context = context.begin();
@@ -580,8 +580,8 @@ fn test_other_differential_join() {
     let context = CreationContext::new();
 
     // Step 1: Create two new inputs and a join relation
-    let (input1, relation1) = context.new_input::<(i32, i32)>();
-    let (input2, relation2) = context.new_input::<(i32, i32)>();
+    let (input1, relation1) = context.new_input_::<(i32, i32)>();
+    let (input2, relation2) = context.new_input_::<(i32, i32)>();
     let mut join_relation = context.output(relation1.join(relation2));
 
     let mut context = context.begin();
@@ -617,8 +617,8 @@ fn test_other_differential_antijoin() {
     let context = CreationContext::new();
 
     // Step 1: Create two new inputs and an antijoin relation
-    let (input1, relation1) = context.new_input::<(i32, i32)>();
-    let (input2, relation2) = context.new_input::<i32>();
+    let (input1, relation1) = context.new_input_::<(i32, i32)>();
+    let (input2, relation2) = context.new_input_::<i32>();
     let mut antijoin_relation = context.output(relation1.antijoin(relation2));
 
     let mut context = context.begin();
@@ -654,7 +654,7 @@ fn test_maxes_with_high_volume() {
     let context = CreationContext::new();
 
     // Step 1: Create a new input and a maxes relation
-    let (input, relation) = context.new_input::<(i32, i32)>();
+    let (input, relation) = context.new_input_::<(i32, i32)>();
     let mut maxes_relation = context.output(relation.maxes().consolidate());
 
     let mut context = context.begin();
