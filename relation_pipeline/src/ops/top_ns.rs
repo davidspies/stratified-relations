@@ -79,6 +79,13 @@ impl<K: Clone + Eq + Hash, V: Clone + Ord + Hash, Op: RelationalOp<T = (K, V)>, 
             }
         })
     }
+
+    fn consolidate<'a>(self) -> impl RelationalOp<T = Self::T> + 'a
+    where
+        Self: 'a,
+    {
+        TopNs::new(self.relation.consolidate())
+    }
 }
 
 fn output<V: Clone, const N: usize>(vec: &ArrayVec<(V, i64), N>) -> ArrayVec<V, N> {

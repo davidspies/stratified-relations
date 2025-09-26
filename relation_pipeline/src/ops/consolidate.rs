@@ -25,7 +25,10 @@ impl<T: Eq + Hash, Op: RelationalOp<T = T>> RelationalOp for Consolidate<T, Op> 
             f(x, count);
         }
     }
-    fn consolidate(self) -> impl RelationalOp<T = T> {
+    fn consolidate<'a>(self) -> impl RelationalOp<T = T> + 'a
+    where
+        Self: 'a,
+    {
         self
     }
 }

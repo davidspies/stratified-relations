@@ -34,7 +34,10 @@ impl<T: Clone + Eq + Hash, Op: RelationalOp<T = T>> RelationalOp for Counts<T, O
             }
         })
     }
-    fn consolidate(self) -> impl RelationalOp<T = (T, i64)> {
+    fn consolidate<'a>(self) -> impl RelationalOp<T = (T, i64)> + 'a
+    where
+        Self: 'a,
+    {
         Counts::new(self.relation.consolidate())
     }
 }

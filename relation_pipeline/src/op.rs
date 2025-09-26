@@ -18,9 +18,9 @@ pub trait RelationalOp {
             counts.add(x, n);
         });
     }
-    fn consolidate(self) -> impl RelationalOp<T = Self::T>
+    fn consolidate<'a>(self) -> impl RelationalOp<T = Self::T> + 'a
     where
-        Self: Sized,
+        Self: Sized + 'a,
         Self::T: Eq + Hash,
     {
         Consolidate::new(self)

@@ -34,8 +34,9 @@ impl<T, Op: RelationalOp<T = T>> Relation<T, Op> {
             .op
             .dump_to_map(self.current_commit_id.get(), counts);
     }
-    pub fn consolidate(self) -> Relation<T, impl RelationalOp<T = T>>
+    pub fn consolidate<'a>(self) -> Relation<T, impl RelationalOp<T = T> + 'a>
     where
+        Op: 'a,
         T: Eq + Hash,
     {
         Relation {
@@ -57,9 +58,10 @@ impl<T, Op: RelationalOp<T = T>> RelationalOp for RelationInner<T, Op> {
     fn for_each(&mut self, commit_id: CommitId, f: impl FnMut(Self::T, i64)) {
         self.op.for_each(commit_id, f);
     }
-    fn consolidate(self) -> impl RelationalOp<T = T>
+    fn consolidate<'a>(self) -> impl RelationalOp<T = T> + 'a
     where
         T: Eq + Hash,
+        Self: 'a,
     {
         RelationInner::new(self.op.consolidate())
     }

@@ -15,18 +15,27 @@ trait RelationalOpDyn<'a> {
     fn dump_to_map(&mut self, commit_id: u64, counts: &mut HashMap<Self::T, i64>)
     where
         Self::T: Eq + Hash;
+    fn consolidate(self: Box<Self>) -> Box<dyn RelationalOpDyn<'a, T = Self::T> + 'a>
+    where
+        Self::T: Eq + Hash;
 }
 
-impl<'a, T, Op: RelationalOp<T = T>> RelationalOpDyn<'a> for Op {
+impl<'a, T, Op: RelationalOp<T = T> + 'a> RelationalOpDyn<'a> for Op {
     type T = T;
     fn for_each(&mut self, commit_id: CommitId, f: &mut dyn FnMut(T, i64)) {
-        self.for_each(commit_id, f);
+        RelationalOp::for_each(self, commit_id, f);
     }
     fn dump_to_map(&mut self, commit_id: u64, counts: &mut HashMap<Self::T, i64>)
     where
         Self::T: Eq + Hash,
     {
-        self.dump_to_map(commit_id, counts);
+        RelationalOp::dump_to_map(self, commit_id, counts);
+    }
+    fn consolidate(self: Box<Self>) -> Box<dyn RelationalOpDyn<'a, T = T> + 'a>
+    where
+        T: Eq + Hash,
+    {
+        Box::new(RelationalOp::consolidate(*self))
     }
 }
 
@@ -41,5 +50,12 @@ impl<T> RelationalOp for Dynamic<'_, T> {
         T: Eq + Hash,
     {
         self.0.dump_to_map(commit_id, counts);
+    }
+    fn consolidate<'a>(self) -> impl RelationalOp<T = T> + 'a
+    where
+        Self: 'a,
+        T: Eq + Hash,
+    {
+        Dynamic(self.0.consolidate())
     }
 }

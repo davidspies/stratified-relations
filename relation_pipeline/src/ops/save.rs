@@ -57,7 +57,10 @@ impl<T: Clone + Eq + Hash, R: RelationalOp<T = T>> RelationalOp for SaveOp<T, R>
             f(x, n);
         }
     }
-    fn consolidate(self) -> impl RelationalOp<T = Self::T> {
+    fn consolidate<'a>(self) -> impl RelationalOp<T = Self::T> + 'a
+    where
+        Self: 'a,
+    {
         self
     }
 }

@@ -33,7 +33,10 @@ impl<T: Clone + Eq + Hash, Op: RelationalOp<T = T>> RelationalOp for Distinct<T,
             }
         })
     }
-    fn consolidate(self) -> impl RelationalOp<T = T> {
+    fn consolidate<'a>(self) -> impl RelationalOp<T = T> + 'a
+    where
+        Self: 'a,
+    {
         Distinct::new(self.relation.consolidate())
     }
 }

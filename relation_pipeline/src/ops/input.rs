@@ -37,5 +37,4 @@ impl<T> RelationalOp for InputOp<T> {
         }
         self.pending.extend(iter);
     }
-    // todo!() Consolidate should be a no-op
 }

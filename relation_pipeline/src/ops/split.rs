@@ -61,5 +61,4 @@ impl<T, L, R, Op: RelationalOp<T = (L, R)>> RelationalOp for Split<T, L, R, Op> 
             f(x, n);
         }
     }
-    // todo!() Consolidate should be a no-op
 }
